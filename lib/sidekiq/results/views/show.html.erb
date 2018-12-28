@@ -1,0 +1,64 @@
+<%= erb :_job_info, locals: {job: @result, type: @result['retry_count'] ? :retry : nil} %>
+
+<header>
+  <h3><%= t('Extra') %></h3>
+</header>
+<table class="error table table-bordered table-striped">
+  <tbody>
+    <tr>
+      <th><%= t('Status') %></th>
+      <td><%= status_label(@result['status']) %></td>
+    </tr>
+    <tr>
+      <th><%= t('StartedAt') %></th>
+      <td><%= Time.at(@result['started_at']) %></td>
+    </tr>
+    <tr>
+      <th><%= t('FinishedAt') %></th>
+      <td><%= @result['finished_at'] && Time.at(@result['finished_at']) %></td>
+    </tr>
+    <tr>
+      <th><%= t('Time') %></th>
+      <td><%= @result['finished_at'] && (@result['finished_at'] - @result['started_at']).to_f.round(3) %></td>
+    </tr>
+    <tr>
+      <th><%= t('Processor') %></th>
+      <td><%= @result['processor'] %></td>
+    </tr>
+  </tbody>
+</table>
+
+<% if @result['error_class'] %>
+  <header>
+    <h3><%= t('Error') %></h3>
+  </header>
+  <table class="error table table-bordered table-striped">
+    <tbody>
+      <tr>
+        <th><%= t('ErrorClass') %></th>
+        <td>
+          <code><%= @result['error_class'] %></code>
+        </td>
+      </tr>
+      <tr>
+        <th><%= t('ErrorMessage') %></th>
+        <td><%= @result['error_message'] %></td>
+      </tr>
+      <% unless @result['error_backtrace'].nil? %>
+        <tr>
+          <th><%= t('ErrorBacktrace') %></th>
+          <td>
+            <code><%= @result['error_backtrace'].join("<br/>") %></code>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<form class="form-horizontal" action="<%= root_path %>results/<%= job_params(@result, @result.score) %>" method="post">
+  <%= csrf_tag if respond_to?(:csrf_tag) %>
+  <a class="btn" href="<%= root_path %>results"><%= t('GoBack') %></a>
+  <input class="btn btn-primary" type="submit" name="retry" value="<%= t('RetryNow') %>" />
+  <input class="btn btn-danger" type="submit" name="delete" value="<%= t('Delete') %>" />
+</form>
