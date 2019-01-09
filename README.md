@@ -2,6 +2,10 @@
 
 Results for sidekiq jobs.
 
+## Screenshot
+
+![screenshot](doc/ss.png)
+
 ## Installation
 
 Add this line to your application's Gemfile:
